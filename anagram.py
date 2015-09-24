@@ -3,15 +3,15 @@ import os
 
 
 def encode(string):
-    s = sorted(string)
-    return "".join(s)
+    return "".join(sorted(set(string)))
 
 
 def createDictionary():
+    print("Creating the dictionary...")
     f = open("/usr/share/dict/words", 'r')
     b = f.readlines()
     f.close()
-    b = [i.split("\n")[0].lower() for i in b]
+    b = sorted([i.split("\n")[0].lower() for i in b])
     dictionary = {}
     for i in b:
         e = encode(i)
@@ -42,12 +42,15 @@ def loadDictionary():
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    print("Loading the dictionary...")
     dictionary = loadDictionary()
     word = args[0]
     e = encode(word)
     print("Input word: " + word)
-    anagrams = dictionary[e] if e in dictionary.keys() else ["none"]
-    if len(anagrams) == 1 and anagrams[0] == word:
-        anagrams = ["none"]
+    matches = dictionary[e] if e in dictionary.keys() else []
+    anagrams = []
+    for i in matches:
+        if "".join(sorted(i)) == "".join(sorted(word)):
+            anagrams.append(i)
+    if word in anagrams:
+        anagrams.remove(word)
     print("Anagrams: " + ", ".join(anagrams))
