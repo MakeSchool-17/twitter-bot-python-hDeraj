@@ -19,16 +19,16 @@ def createDictionary():
             dictionary[e].append(i)
         else:
             dictionary[e] = [i]
-    f = open("edictionary", 'w')
+    f = open("data/edictionary", 'w')
     for i in dictionary.keys():
         f.write(i+":"+",".join(dictionary[i])+"\n")
     f.close()
 
 
 def loadDictionary():
-    if "edictionary" not in os.listdir():
+    if "edictionary" not in os.listdir('data'):
         createDictionary()
-    f = open("edictionary", 'r')
+    f = open("data/edictionary", 'r')
     lines = f.readlines()
     f.close()
     dictionary = {}
