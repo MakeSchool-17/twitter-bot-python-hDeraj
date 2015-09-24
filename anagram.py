@@ -26,7 +26,9 @@ def createDictionary():
 
 
 def loadDictionary():
-    if "edictionary" not in os.listdir('data'):
+    if "data" not in os.listdir():
+        os.mkdir("data")
+    if "edictionary" not in os.listdir("data"):
         createDictionary()
     f = open("data/edictionary", 'r')
     lines = f.readlines()
