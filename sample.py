@@ -9,7 +9,7 @@ class SamplerHistogram(histogram.Histogram):
         keys = list(self.histogram.keys())
         if len(keys) == 0:
             return None
-        choice = random.randint(0, self.items)
+        choice = random.randint(1, self.items)
         cur = 0
         prob = self.histogram[keys[cur]]
         while prob < choice:
@@ -30,4 +30,7 @@ if __name__ == "__main__":
             print("file doesn't exist")
     else:
         hist.loadFromList(args)
-    print(hist.sample())
+    test = SamplerHistogram()
+    for i in range(0, 1000):
+        test.add_word(hist.sample())
+    print(test.histogram)
