@@ -1,5 +1,6 @@
 import sys
 import os
+import pickle
 
 
 def encode(string):
@@ -8,35 +9,30 @@ def encode(string):
 
 def createDictionary():
     print("Creating the dictionary...")
-    f = open("/usr/share/dict/words", 'r')
-    b = f.readlines()
-    f.close()
-    b = sorted([i.split("\n")[0].lower() for i in b])
     dictionary = {}
-    for i in b:
-        e = encode(i)
-        if e in dictionary.keys():
-            dictionary[e].append(i)
-        else:
-            dictionary[e] = [i]
-    f = open("data/edictionary", 'w')
-    for i in dictionary.keys():
-        f.write(i+":"+",".join(dictionary[i])+"\n")
-    f.close()
+    keys = set()
+    with open("/usr/share/dict/words", 'r') as f:
+        for line in f:
+            i = line.strip().lower()
+            e = encode(i)
+            if e in keys:
+                dictionary[e].append(i)
+            else:
+                dictionary[e] = [i]
+                keys.add(e)
+    with open("data/edictionary", 'wb') as f:
+        pickle.dump(dictionary, f)
+    return dictionary
 
 
 def loadDictionary():
     if "data" not in os.listdir():
         os.mkdir("data")
     if "edictionary" not in os.listdir("data"):
-        createDictionary()
-    f = open("data/edictionary", 'r')
-    lines = f.readlines()
-    f.close()
+        return createDictionary()
     dictionary = {}
-    for i in lines:
-        s = i.split("\n")[0].split(":")
-        dictionary[s[0]] = s[1].split(",")
+    with open("data/edictionary", 'rb') as f:
+        dictionary = pickle.load(f)
     return dictionary
 
 
@@ -49,7 +45,7 @@ if __name__ == "__main__":
     matches = dictionary[e] if e in dictionary.keys() else []
     anagrams = []
     for i in matches:
-        if "".join(sorted(i)) == "".join(sorted(word)):
+        if sorted(i) == sorted(word):
             anagrams.append(i)
     if word in anagrams:
         anagrams.remove(word)

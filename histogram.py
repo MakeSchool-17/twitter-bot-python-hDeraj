@@ -2,15 +2,8 @@ import string
 
 
 class Histogram():
-    def __init__(self, filename):
-        words = getWordsFromFile(filename)
-        hist = {}
-        for i in words:
-            if i in hist.keys():
-                hist[i] += 1
-            else:
-                hist[i] = 1
-        self.histogram = hist
+    def __init__(self):
+        self.histogram = {}
 
     def frequency(self, word):
         if word not in self.histogram.keys():
@@ -20,6 +13,21 @@ class Histogram():
 
     def unique_words(self):
         return sum([i for i in self.histogram.values() if i == 1])
+
+    def loadFromFile(self, filename):
+        words = getWordsFromFile(filename)
+        for i in words:
+            if i in self.hist.keys():
+                self.hist[i] += 1
+            else:
+                self.hist[i] = 1
+
+    def loadFromList(self, stuff):
+        for i in stuff:
+            if i in self.hist.keys():
+                self.hist[i] += 1
+            else:
+                self.hist[i] = 1
 
 
 def getWordsFromFile(name):
