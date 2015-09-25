@@ -6,9 +6,16 @@ import random
 
 class SamplerHistogram(histogram.Histogram):
     def sample(self):
-        if len(self.histogram.keys()) == 0:
+        keys = list(self.histogram.keys())
+        if len(keys) == 0:
             return None
-        return random.choice(list(self.histogram.keys()))
+        choice = random.randint(0, self.items)
+        cur = 0
+        prob = self.histogram[keys[cur]]
+        while prob < choice:
+            cur += 1
+            prob += self.histogram[keys[cur]]
+        return keys[cur]
 
 
 if __name__ == "__main__":

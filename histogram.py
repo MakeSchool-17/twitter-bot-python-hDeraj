@@ -4,6 +4,7 @@ import string
 class Histogram:
     def __init__(self):
         self.histogram = {}
+        self.items = 0
 
     def frequency(self, word):
         if word not in self.histogram.keys():
@@ -21,6 +22,7 @@ class Histogram:
                 self.histogram[i] += 1
             else:
                 self.histogram[i] = 1
+            self.items += 1
 
     def loadFromList(self, stuff):
         for i in stuff:
@@ -28,6 +30,7 @@ class Histogram:
                 self.histogram[i] += 1
             else:
                 self.histogram[i] = 1
+            self.items += 1
 
 
 def getWordsFromFile(name):
