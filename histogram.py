@@ -46,5 +46,3 @@ if __name__ == "__main__":
     print(myHistogram.frequency("the"))
     print(myHistogram.unique_words())
     print(len(myHistogram.histogram.keys()))
-
-    print("nothing")

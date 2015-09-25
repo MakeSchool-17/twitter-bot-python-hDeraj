@@ -6,7 +6,7 @@ def loadDictionary():
     f = open("/usr/share/dict/words", 'r')
     b = f.readlines()
     f.close()
-    return [i.split("\n")[0] for i in b]
+    return [i.strip() for i in b]
 
 
 if __name__ == "__main__":

@@ -30,6 +30,7 @@ if __name__ == "__main__":
             print("file doesn't exist")
     else:
         hist.loadFromList(args)
+
     test = SamplerHistogram()
     for i in range(0, 1000):
         test.add_word(hist.sample())
