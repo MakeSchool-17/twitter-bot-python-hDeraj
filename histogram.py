@@ -1,7 +1,7 @@
 import string
 
 
-class Histogram():
+class Histogram:
     def __init__(self):
         self.histogram = {}
 
@@ -17,17 +17,17 @@ class Histogram():
     def loadFromFile(self, filename):
         words = getWordsFromFile(filename)
         for i in words:
-            if i in self.hist.keys():
-                self.hist[i] += 1
+            if i in self.histogram.keys():
+                self.histogram[i] += 1
             else:
-                self.hist[i] = 1
+                self.histogram[i] = 1
 
     def loadFromList(self, stuff):
         for i in stuff:
-            if i in self.hist.keys():
-                self.hist[i] += 1
+            if i in self.histogram.keys():
+                self.histogram[i] += 1
             else:
-                self.hist[i] = 1
+                self.histogram[i] = 1
 
 
 def getWordsFromFile(name):
