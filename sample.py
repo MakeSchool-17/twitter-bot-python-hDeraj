@@ -1,10 +1,10 @@
-import histogram
+from histogram import Histogram
 import sys
 import os
 import random
 
 
-class SamplerHistogram(histogram.Histogram):
+class SamplerHistogram(Histogram):
     def sample(self):
         keys = list(self.histogram.keys())
         if len(keys) == 0:
@@ -25,11 +25,11 @@ if __name__ == "__main__":
         print("no arguments given")
     elif len(args) == 1:
         if args[0] in os.listdir():
-            hist.loadFromFile(args[0])
+            hist.load_from_file(args[0])
         else:
             print("file doesn't exist")
     else:
-        hist.loadFromList(args)
+        hist.load_from_list(args)
 
     test = SamplerHistogram()
     for i in range(0, 1000):

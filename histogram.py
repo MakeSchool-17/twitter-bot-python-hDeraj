@@ -17,27 +17,23 @@ class Histogram:
         self.histogram[word] += 1
         self.items += 1
 
-    def loadFromFile(self, filename):
-        words = getWordsFromFile(filename)
-        for i in words:
-            self.add_word(i)
+    def load_from_file(self, filename):
+        words = get_words_from_file(filename)
+        self.load_from_list(words)
 
-    def loadFromList(self, stuff):
+    def load_from_list(self, stuff):
         for i in stuff:
             self.add_word(i)
 
 
-def getWordsFromFile(name):
-    f = open("data/downandout.txt", 'r')
-    lines = f.readlines()
-    f.close()
+def get_words_from_file(name):
     table = str.maketrans("", "", string.punctuation + "\n")
     words = []
-    for i in lines:
-        if i == "\n":
-            continue
-        words.extend(i.translate(table).split(" "))
-    print(words[:100])
+    with open("data/downandout.txt", 'r') as f:
+        for i in f:
+            if i == "\n":
+                continue
+            words.extend(i.strip().translate(table).split(" "))
     return words
 
 

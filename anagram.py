@@ -1,52 +1,47 @@
 import sys
 import os
 import pickle
+from collections import defaultdict
 
 
 def encode(string):
     return "".join(sorted(set(string)))
 
 
-def createDictionary():
+def create_dictionary():
     print("Creating the dictionary...")
-    dictionary = {}
-    keys = set()
+    dictionary = defaultdict(list)
     with open("/usr/share/dict/words", 'r') as f:
         for line in f:
             i = line.strip().lower()
             e = encode(i)
-            if e in keys:
-                dictionary[e].append(i)
-            else:
-                dictionary[e] = [i]
-                keys.add(e)
+            dictionary[e].append(i)
     with open("data/edictionary", 'wb') as f:
         pickle.dump(dictionary, f)
     return dictionary
 
 
-def loadDictionary():
-    if "data" not in os.listdir():
-        os.mkdir("data")
+def load_dictionary():
     if "edictionary" not in os.listdir("data"):
-        return createDictionary()
+        return create_dictionary()
     dictionary = {}
     with open("data/edictionary", 'rb') as f:
         dictionary = pickle.load(f)
     return dictionary
 
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    dictionary = loadDictionary()
-    word = args[0]
+def get_anagrams(dictionary, word):
     e = encode(word)
-    print("Input word: " + word)
-    matches = dictionary[e] if e in dictionary.keys() else []
-    anagrams = []
-    for i in matches:
-        if sorted(i) == sorted(word):
-            anagrams.append(i)
+    matches = dictionary[e] if e in dictionary else []
+    anagrams = [i for i in matches if sorted(i) == sorted(word)]
     if word in anagrams:
         anagrams.remove(word)
+    return anagrams
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    dictionary = load_dictionary()
+    word = args[0]
+    print("Input word: " + word)
+    anagrams = get_anagrams(dictionary, word)
     print("Anagrams: " + ", ".join(anagrams))

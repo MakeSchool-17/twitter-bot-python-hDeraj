@@ -3,16 +3,16 @@ import random
 
 
 def rearrange(stuff):
-    newstuff = stuff[:]
-    random.shuffle(newstuff)
-    return newstuff
+    new_stuff = stuff[:]
+    random.shuffle(new_stuff)
+    return new_stuff
 
 
 def reverse(stuff):
     return stuff[::-1]
 
 
-def reverseSentence(sentence):
+def reverse_sentence(sentence):
     return " ".join(sentence.split(" ")[::-1])
 
 
@@ -22,4 +22,4 @@ if __name__ == "__main__":
     if len(args) == 1:
         print("reversing: " + reverse(args[0]))
     else:
-        print("reversing: " + reverseSentence(" ".join(args)))
+        print("reversing: " + reverse_sentence(" ".join(args)))
