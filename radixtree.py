@@ -40,14 +40,22 @@ class RadixTree:
                 elif common != "":
                     # if it partially matches the prefix
                     found = True
-                    new_node = RadixNode(word.replace(common, ""))
-                    new_node.frequency = 1
-                    new_root = RadixNode(common)
-                    i.prefix = i.prefix.replace(common, "")
-                    new_root.children = [i, new_node]
-                    current.children[current.children.index(i)] = new_root
-                    done = True
-                    pass
+                    if common == word:
+                        # complete match, need to split
+                        new_node = RadixNode(i.prefix.replace(common, ""))
+                        new_node.frequency = i.frequency
+                        i.prefix = common
+                        i.children.append(new_node)
+                        done = True
+                    else:
+                        new_node = RadixNode(word.replace(common, ""))
+                        new_node.frequency = 1
+                        new_root = RadixNode(common)
+                        i.prefix = i.prefix.replace(common, "")
+                        new_root.children = [i, new_node]
+                        current.children[current.children.index(i)] = new_root
+                        done = True
+                    break
             if not found:
                 new_leaf = RadixNode(word)
                 new_leaf.frequency = 1
@@ -67,6 +75,8 @@ class RadixNode:
     def __str__(self, indent=0):
         val = self.prefix + " (" + str(self.frequency) + ")"
         ret = "\t"*indent + val + "\n"
+        if indent == 0:
+            ret = "[root]\n"
         for child in self.children:
             ret += child.__str__(indent + 1)
         return ret
