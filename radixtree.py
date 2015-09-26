@@ -13,11 +13,15 @@ class RadixTree:
         current = self.root
         builder = ""
         while not current.is_leaf() and len(builder) < len(word):
+            progress = False
             for i in current.children:
                 if word.find(builder + i.prefix) == 0:
                     current = i
                     builder += i.prefix
+                    progress = True
                     break
+            if not progress:
+                return False
         return builder == word
 
     def insert(self, word):
@@ -88,9 +92,6 @@ class RadixTree:
         else:
             current.frequency -= 1
             if current.frequency <= 0:
-                print(current.parent.prefix)
-                print(current.parent.children)
-                print(current.prefix)
                 current.parent.children.remove(current)
                 if len(current.parent.children) == 1:
                     other = current.parent.children[0]
@@ -127,13 +128,6 @@ def common_prefix(a, b):
         prefix += 1
     return a[:prefix]
 
-
-def run_test():
-    a = RadixTree()
-    words = ["hello", "head", "testing", "tents", "ten", "tent"]
-    for word in words:
-        a.insert(word)
-    return a
 
 if __name__ == "__main__":
     print("RadixTree")
