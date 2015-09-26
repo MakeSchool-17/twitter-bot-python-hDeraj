@@ -33,11 +33,11 @@ class RadixTree:
                 common = common_prefix(word, i.prefix)
                 if common == i.prefix:
                     # if it matches the entire prefix
+                    found = True
                     if common == word:
                         # if it matches rest of word
                         i.frequency += 1
-                        done = True
-                    found = True
+                        return True
                     word = word.replace(common, "")
                     current = i
                     break
@@ -48,8 +48,11 @@ class RadixTree:
                         # complete match, need to split
                         new_node = RadixNode(i.prefix.replace(common, ""), i)
                         new_node.frequency = i.frequency
+                        new_node.children = i.children
                         i.prefix = common
-                        i.children.append(new_node)
+                        i.children = [new_node]
+                        for j in new_node.children:
+                            j.parent = new_node
                         done = True
                     else:
                         new_root = RadixNode(common, current)
@@ -72,34 +75,32 @@ class RadixTree:
     def delete(self, word):
         current = self.root
         builder = ""
-        while not current.is_leaf() and len(builder) < len(word):
+        while not current.is_leaf() and builder != word:
             for i in current.children:
                 if word.find(builder + i.prefix) == 0:
                     current = i
                     builder += i.prefix
                     break
+        current.frequency -= 1
         if len(current.children) > 0:
-            current.frequency -= 1
             if current.frequency == 0 and len(current.children) == 1:
-                current.prefix += current.children[0].prefix
-                current.frequency = current.children[0].frequency
-                current.children[0].parent = None
-                temp_children = current.children[0].children
-                current.children[0].children = []
-                current.children = temp_children
-                for i in current.children:
-                    i.parent = current
+                self._squash(current, current.children[0])
         else:
-            current.frequency -= 1
             if current.frequency <= 0:
                 current.parent.children.remove(current)
                 if len(current.parent.children) == 1:
                     other = current.parent.children[0]
-                    current.parent.prefix += other.prefix
-                    current.parent.frequency += other.frequency
-                    other.parent = None
-                    current.parent.children = other.children
+                    self._squash(current.parent, other)
                 current.parent = None
+
+    def _squash(self, parent, child):
+        parent.prefix += child.prefix
+        parent.frequency += child.frequency
+        child.parent = None
+        parent.children = child.children
+        for i in parent.children:
+            i.parent = parent
+        child.children = None
 
 
 class RadixNode:
