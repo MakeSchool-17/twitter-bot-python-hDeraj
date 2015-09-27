@@ -1,5 +1,6 @@
 class RadixTree:
     def __init__(self, words=[]):
+        """Creates a new RadixTree, and fills it with the supplied words"""
         self.root = RadixNode()
         self.numberOfWords = 0
         if len(words) > 0:
@@ -7,12 +8,15 @@ class RadixTree:
                 self.insert(word)
 
     def __str__(self):
+        """Returns the formatted tree as a string."""
         return str(self.root)
 
     def get_words(self):
+        """Returns a list of all the words stored in the tree."""
         return self.root._get_words()
 
     def search(self, word):
+        """Returns the frequency of the supplied word in the tree, or -1."""
         current = self.root
         builder = ""
         while not current.is_leaf() and len(builder) < len(word):
@@ -28,6 +32,7 @@ class RadixTree:
         return current.frequency if builder == word else -1
 
     def insert(self, word, count=1):
+        """Inserts the supplied word into the tree."""
         self.numberOfWords += count
         current = self.root
         while current:
@@ -68,6 +73,7 @@ class RadixTree:
                 return True
 
     def delete(self, word, count=1):
+        """Removes the supplied word from the tree."""
         current = self.root
         builder = ""
         while not current.is_leaf() and builder != word:
@@ -92,24 +98,36 @@ class RadixTree:
 
 class RadixNode:
     def __init__(self, prefix="", parent=None):
+        """Creates a new RadixNode with the supplied prefix and parent."""
         self.prefix = prefix
         self.children = []
         self.frequency = 0
         self.parent = parent
 
     def __str__(self, indent=0):
+        """
+        Displays the prefix and frequency.
+
+        Indents the string according to its depth in the tree.
+        """
         val = self.prefix + " (" + str(self.frequency) + ")"
         ret = "\t"*indent + val + "\n"
         if indent == 0:
-            ret = "[root]\n"
+            ret = "[root] " + ret + "\n"
         for child in self.children:
             ret += child.__str__(indent + 1)
         return ret
 
     def is_leaf(self):
+        """Check if the node has any children."""
         return len(self.children) == 0
 
     def _squash(self, child):
+        """
+        Squashes the current node with the supplied child node.
+
+
+        """
         self.prefix += child.prefix
         self.frequency += child.frequency
         child.parent = None
@@ -119,6 +137,7 @@ class RadixNode:
         child.children = None
 
     def _split(self, prefix):
+        """Split the node into a parent and child node."""
         child_prefix = self.prefix.replace(prefix, "")
         child = RadixNode(child_prefix, self)
         self.prefix = prefix
@@ -131,6 +150,13 @@ class RadixNode:
         return child
 
     def _get_words(self, prefix=""):
+        """
+        Returns the words stored in the current node, as well as it's children.
+
+        RECURSION:
+        - Recurses to the depth of the tree.
+        - Bounded by the length of the biggest word stored.
+        """
         words = []
         new_prefix = prefix + self.prefix
         if self.frequency > 0:
@@ -141,6 +167,7 @@ class RadixNode:
 
 
 def common_prefix(a, b):
+    """Returns the largest common prefix between the two supplied strings."""
     prefix = 0
     while b.find(a[:prefix+1]) == 0 and prefix < min(len(a), len(b)):
         prefix += 1
