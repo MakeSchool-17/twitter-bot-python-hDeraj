@@ -21,13 +21,12 @@ class RadixTree:
                     progress = True
                     break
             if not progress:
-                return False
-        return builder == word
+                return -1
+        return current.frequency if builder == word else -1
 
-    def insert(self, word):
+    def insert(self, word, count=1):
         current = self.root
-        done = False
-        while not done:
+        while current:
             found = False
             for i in current.children:
                 common = common_prefix(word, i.prefix)
@@ -36,7 +35,7 @@ class RadixTree:
                     found = True
                     if common == word:
                         # if it matches rest of word
-                        i.frequency += 1
+                        i.frequency += count
                         return True
                     word = word.replace(common, "")
                     current = i
@@ -46,31 +45,23 @@ class RadixTree:
                     found = True
                     if common == word:
                         # complete match, need to split
-                        new_node = RadixNode(i.prefix.replace(common, ""), i)
-                        new_node.frequency = i.frequency
-                        new_node.children = i.children
-                        i.prefix = common
-                        i.children = [new_node]
-                        for j in new_node.children:
-                            j.parent = new_node
-                        done = True
+                        new_node = i._split(common)
+                        i.frequency = count
+                        return True
                     else:
-                        new_root = RadixNode(common, current)
-                        new_node = RadixNode(
-                            word.replace(common, ""),
-                            new_root)
-                        new_node.frequency = 1
-                        i.prefix = i.prefix.replace(common, "")
-                        i.parent = new_root
-                        new_root.children = [i, new_node]
-                        current.children[current.children.index(i)] = new_root
-                        done = True
+                        # partial match, split and create neighbor
+                        i._split(common)
+                        new_prefix = word.replace(common, "")
+                        new_node = RadixNode(new_prefix, i)
+                        new_node.frequency = count
+                        i.children.append(new_node)
+                        return True
                     break
             if not found:
                 new_leaf = RadixNode(word, current)
                 new_leaf.frequency = 1
                 current.children.append(new_leaf)
-                done = True
+                return True
 
     def delete(self, word):
         current = self.root
@@ -84,23 +75,14 @@ class RadixTree:
         current.frequency -= 1
         if len(current.children) > 0:
             if current.frequency == 0 and len(current.children) == 1:
-                self._squash(current, current.children[0])
+                current._squash(current.children[0])
         else:
             if current.frequency <= 0:
                 current.parent.children.remove(current)
                 if len(current.parent.children) == 1:
                     other = current.parent.children[0]
-                    self._squash(current.parent, other)
+                    current.parent._squash(other)
                 current.parent = None
-
-    def _squash(self, parent, child):
-        parent.prefix += child.prefix
-        parent.frequency += child.frequency
-        child.parent = None
-        parent.children = child.children
-        for i in parent.children:
-            i.parent = parent
-        child.children = None
 
 
 class RadixNode:
@@ -121,6 +103,27 @@ class RadixNode:
 
     def is_leaf(self):
         return len(self.children) == 0
+
+    def _squash(self, child):
+        self.prefix += child.prefix
+        self.frequency += child.frequency
+        child.parent = None
+        self.children = child.children
+        for i in self.children:
+            i.parent = self
+        child.children = None
+
+    def _split(self, prefix):
+        child_prefix = self.prefix.replace(prefix, "")
+        child = RadixNode(child_prefix, self)
+        self.prefix = prefix
+        child.children = self.children
+        child.frequency = self.frequency
+        self.frequency = 0
+        for i in child.children:
+            i.parent = child
+        self.children = [child]
+        return child
 
 
 def common_prefix(a, b):
