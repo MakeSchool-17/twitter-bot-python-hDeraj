@@ -9,6 +9,9 @@ class RadixTree:
     def __str__(self):
         return str(self.root)
 
+    def get_words(self):
+        return self.root._get_words()
+
     def search(self, word):
         current = self.root
         builder = ""
@@ -25,6 +28,7 @@ class RadixTree:
         return current.frequency if builder == word else -1
 
     def insert(self, word, count=1):
+        self.numberOfWords += count
         current = self.root
         while current:
             found = False
@@ -63,7 +67,7 @@ class RadixTree:
                 current.children.append(new_leaf)
                 return True
 
-    def delete(self, word):
+    def delete(self, word, count=1):
         current = self.root
         builder = ""
         while not current.is_leaf() and builder != word:
@@ -72,7 +76,8 @@ class RadixTree:
                     current = i
                     builder += i.prefix
                     break
-        current.frequency -= 1
+        self.numberOfWords -= max(0, current.frequency - count)
+        current.frequency -= count
         if len(current.children) > 0:
             if current.frequency == 0 and len(current.children) == 1:
                 current._squash(current.children[0])
@@ -124,6 +129,15 @@ class RadixNode:
             i.parent = child
         self.children = [child]
         return child
+
+    def _get_words(self, prefix=""):
+        words = []
+        new_prefix = prefix + self.prefix
+        if self.frequency > 0:
+            words.append((new_prefix, self.frequency))
+        for i in self.children:
+            words.extend(i._get_words(new_prefix))
+        return words
 
 
 def common_prefix(a, b):
