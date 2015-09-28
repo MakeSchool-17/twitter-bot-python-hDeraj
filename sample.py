@@ -6,16 +6,16 @@ import random
 
 class SamplerHistogram(Histogram):
     def sample(self):
-        keys = list(self.histogram.keys())
-        if len(keys) == 0:
+        words = self._tree.get_words()
+        if len(words) == 0:
             return None
-        choice = random.randint(1, self.items)
+        choice = random.randint(1, self.entries())
         cur = 0
-        prob = self.histogram[keys[cur]]
+        prob = words[0][1]
         while prob < choice:
             cur += 1
-            prob += self.histogram[keys[cur]]
-        return keys[cur]
+            prob += words[cur][1]
+        return words[cur][0]
 
 
 if __name__ == "__main__":
@@ -24,14 +24,13 @@ if __name__ == "__main__":
     if len(args) == 0:
         print("no arguments given")
     elif len(args) == 1:
-        if args[0] in os.listdir():
+        if os.path.isfile(args[0]):
             hist.load_from_file(args[0])
         else:
             print("file doesn't exist")
     else:
         hist.load_from_list(args)
 
-    test = SamplerHistogram()
-    for i in range(0, 1000):
-        test.add_word(hist.sample())
-    print(test.histogram)
+    entries = hist._tree.get_words()
+    for i in entries:
+        print(i)

@@ -29,13 +29,15 @@ class Histogram:
 
 
 def get_words_from_file(name):
-    table = str.maketrans("", "", string.punctuation + "\n")
+    bad = string.punctuation + "\n"
+    table = str.maketrans(bad, " "*len(bad))
     words = []
     with open("data/downandout.txt", 'r') as f:
         for i in f:
             if i == "\n":
                 continue
-            words.extend(i.strip().translate(table).split(" "))
+            words.extend(i.translate(table).strip().lower().split(" "))
+    words = [i for i in words if i.strip() != ""]
     return words
 
 
