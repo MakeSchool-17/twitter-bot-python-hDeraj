@@ -58,18 +58,15 @@ if __name__ == "__main__":
            "radix_freq", "binary_freq"]
     print(row)
 
+    tests = [radix_insert_test,
+             binary_insert_test,
+             radix_freq_test,
+             binary_freq_test]
+
     for num in trial_nums:
         row = [str(num)]
-        timer1 = timeit.Timer(radix_insert_test, globals=globals())
-        timer2 = timeit.Timer(binary_insert_test, globals=globals())
-        timer3 = timeit.Timer(radix_freq_test, globals=globals())
-        timer4 = timeit.Timer(binary_freq_test, globals=globals())
-        result1 = timer1.timeit(number=num)
-        result2 = timer2.timeit(number=num)
-        result3 = timer3.timeit(number=num)
-        result4 = timer4.timeit(number=num)
-        row.append(result1)
-        row.append(result2)
-        row.append(result3)
-        row.append(result4)
+        for test in tests:
+            timer = timeit.Timer(test, globals=globals())
+            result = timer.timeit(number=num)
+            row.append(result)
         print(row)
