@@ -1,11 +1,12 @@
 import string
 # from collections import defaultdict
 from radixtree import RadixTree
+from binarytree import BinaryTree
 
 
 class Histogram:
-    def __init__(self):
-        self._tree = RadixTree()
+    def __init__(self, tree_class=RadixTree):
+        self._tree = tree_class()
 
     def frequency(self, word):
         return self._tree.search(word)
@@ -41,9 +42,16 @@ def get_words_from_file(name):
     return words
 
 
+def test_trees():
+    tree_types = [RadixTree, BinaryTree]
+    for tree in tree_types:
+        myHistogram = Histogram(tree)
+        myHistogram.load_from_file("data/downandout.txt")
+        print(tree)
+        print("\tfrequency of 'the': ", myHistogram.frequency("the"))
+        print("\tunique_words(): ", myHistogram.unique_words())
+        print("\tentries(): ", myHistogram.entries())
+
+
 if __name__ == "__main__":
-    myHistogram = Histogram()
-    myHistogram.load_from_file("data/downandout.txt")
-    print("frequency of 'the': ", myHistogram.frequency("the"))
-    print("unique_words(): ", myHistogram.unique_words())
-    print("entries(): ", myHistogram.entries())
+    test_trees()
