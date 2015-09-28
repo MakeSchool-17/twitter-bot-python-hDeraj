@@ -2,7 +2,7 @@ class RadixTree:
     def __init__(self, words=[]):
         """Creates a new RadixTree, and fills it with the supplied words"""
         self.root = RadixNode()
-        self.numberOfWords = 0
+        self.count = 0
         if len(words) > 0:
             for word in words:
                 self.insert(word)
@@ -33,7 +33,7 @@ class RadixTree:
 
     def insert(self, word, count=1):
         """Inserts the supplied word into the tree."""
-        self.numberOfWords += count
+        self.count += count
         current = self.root
         while current:
             found = False
@@ -82,7 +82,7 @@ class RadixTree:
                     current = i
                     builder += i.prefix
                     break
-        self.numberOfWords -= max(0, current.frequency - count)
+        self.count -= max(0, current.frequency - count)
         current.frequency -= count
         if len(current.children) > 0:
             if current.frequency == 0 and len(current.children) == 1:

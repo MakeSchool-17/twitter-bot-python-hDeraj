@@ -11,7 +11,7 @@ class Histogram:
         return self._tree.search(word)
 
     def entries(self):
-        return self._tree.numberOfWords
+        return self._tree.count
 
     def unique_words(self):
         return len([freq for _, freq in self._tree.get_words() if freq == 1])
