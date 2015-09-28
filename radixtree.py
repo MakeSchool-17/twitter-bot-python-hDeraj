@@ -46,7 +46,7 @@ class RadixTree:
                         # if it matches rest of word
                         i.frequency += count
                         return True
-                    word = word.replace(common, "")
+                    word = word.replace(common, "", 1)
                     current = i
                     break
                 elif common != "":
@@ -60,7 +60,7 @@ class RadixTree:
                     else:
                         # partial match, split and create neighbor
                         i._split(common)
-                        new_prefix = word.replace(common, "")
+                        new_prefix = word.replace(common, "", 1)
                         new_node = RadixNode(new_prefix, i)
                         new_node.frequency = count
                         i.children.append(new_node)
@@ -138,7 +138,7 @@ class RadixNode:
 
     def _split(self, prefix):
         """Split the node into a parent and child node."""
-        child_prefix = self.prefix.replace(prefix, "")
+        child_prefix = self.prefix.replace(prefix, "", 1)
         child = RadixNode(child_prefix, self)
         self.prefix = prefix
         child.children = self.children
